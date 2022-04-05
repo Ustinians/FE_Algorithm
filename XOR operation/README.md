@@ -57,39 +57,39 @@ console.log(0^0); // 0
 
 2. 假如在这个数组中,有两个数都出现了奇数次,他的数都出现了偶数次,请找到出现了奇数次的这两个数
    
-  ```js
-  const arr = [1,1,2,2,2,3,3,3,4,4,5,5];
-  let eor = 0,onlyOne = 0;
-  for(let i = 0;i < arr.length;i++){
-      eor ^= arr[i];
-  }
-  /**
-   * eor = a ^ b;
-   * eor !== 0
-   * eor必然有一个位置上是1
-   */
-  // 把某个不等于0的数最右边的数提取出来
-  // ~eor 对eor进行取反
-  // ~eor+1 对eor进行取反后+1
-  /**
-   * 例:
-   * eor: 101011100
-   * ~eor: 010100011
-   * ~eor+1: 010100100
-   * eor和(~eor+1)进行与运算
-   * 得到: 000000100
-   */
-  let rightOne = eor & (~eor + 1); // 提取出最右边的1
-  for(let i = 0;i < arr.length;i++){
-      if((arr[i] & rightOne) === 1){
-          // 进行与运算,如果相同位上也是1的,进行异或运算
-          // 或者与该位上是0的进行异或运算也可以
-          onlyOne ^= arr[i]; // 如果当前元素的二进制在相同位置上也有1,与only进行异或运算
-      }
-  }
-  // onlyOne是其中一个数,eor^
-  console.log(onlyOne,eor^onlyOne);
-  ```
+    ```js
+    const arr = [1,1,2,2,2,3,3,3,4,4,5,5];
+    let eor = 0,onlyOne = 0;
+    for(let i = 0;i < arr.length;i++){
+        eor ^= arr[i];
+    }
+    /**
+     * eor = a ^ b;
+     * eor !== 0
+     * eor必然有一个位置上是1
+     */
+    // 把某个不等于0的数最右边的数提取出来
+    // ~eor 对eor进行取反
+    // ~eor+1 对eor进行取反后+1
+    /**
+     * 例:
+     * eor: 101011100
+     * ~eor: 010100011
+     * ~eor+1: 010100100
+     * eor和(~eor+1)进行与运算
+     * 得到: 000000100
+     */
+    let rightOne = eor & (~eor + 1); // 提取出最右边的1
+    for(let i = 0;i < arr.length;i++){
+        if((arr[i] & rightOne) === 1){
+            // 进行与运算,如果相同位上也是1的,进行异或运算
+            // 或者与该位上是0的进行异或运算也可以
+            onlyOne ^= arr[i]; // 如果当前元素的二进制在相同位置上也有1,与only进行异或运算
+        }
+    }
+    // onlyOne是其中一个数,eor^
+    console.log(onlyOne,eor^onlyOne);
+    ```
 
 
 
