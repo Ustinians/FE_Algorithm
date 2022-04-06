@@ -1,5 +1,6 @@
 # 二分法的详解与拓展
 
+![](http://latex.codecogs.com/gif.latex?\\sigma=\sqrt{\frac{1}{n}{\sum_{k=1}^n(x_i-\bar{x})^2}})
 $$
 mid = \frac{left+right}{2}容易导致溢出, \\\\
 因此改用mid = left + \frac{right-left}{2}, \\\\
