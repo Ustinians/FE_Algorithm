@@ -1,5 +1,12 @@
 # 二分法的详解与拓展
 
+$$
+mid = \frac{left+right}{2}容易导致溢出, \\\\
+因此改用mid = left + \frac{right-left}{2}, \\\\
+即mid = left + (right-left) >> 1 \\\\
+(右移一位,相当于除以2)
+$$
+
 1. 在一个有序数组中,如何判断某个数是否存在
    
    $$
@@ -10,7 +17,7 @@
    const findNumByDichotomy = (arr,num) => {
        let left = 0,right = arr.length-1;
        while(left <= right){
-           let middle = Math.floor((left + right) / 2);
+           let middle = (left + right) >> 1;
            if(num === arr[middle]) return true;
            else if(num < arr[middle]) right = middle-1;
            else left = middle+1;
@@ -27,7 +34,7 @@
        // 先令flag为arr.length
        let left = 0,right = arr.length-1,flag = arr.length;
        while(left < right){
-           let middle = Math.floor((left + right) / 2);
+           let middle = (left + right) >> 1;
            if(arr[middle] >= num){
                // 如果arr[middle]>=num且middle<flag;将flag赋值为middle
                if(middle < flag){
@@ -56,7 +63,7 @@
        if(arr[0] < arr[1]) return 0;
        let left = 0,right = arr.length-1;
        while(left <= right){
-          let middle = Math.floor((left + right) / 2);
+          let middle = (left + right) >> 1;
           // 当该节点的值小于左右节点,返回
           if(arr[middle] < arr[middle-1] && arr[middle] < arr[middle+1]){
                return middle;
