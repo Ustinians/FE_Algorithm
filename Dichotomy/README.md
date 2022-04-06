@@ -1,12 +1,7 @@
 # 二分法的详解与拓展
 
-![](http://latex.codecogs.com/gif.latex?\\sigma=\sqrt{\frac{1}{n}{\sum_{k=1}^n(x_i-\bar{x})^2}})
-$$
-mid = \frac{left+right}{2}容易导致溢出, \\\\
-因此改用mid = left + \frac{right-left}{2}, \\\\
-即mid = left + (right-left) >> 1 \\\\
-(右移一位,相当于除以2)
-$$
+
+<img src="https://latex.codecogs.com/svg.image?mid&space;=&space;\frac{left&space;&plus;&space;right}{2}\\\\mid&space;=&space;left&space;&plus;&space;\frac{rigjt&space;-&space;left}{2}容易溢出\\\\mid&space;=&space;left&space;&plus;&space;(right&space;&plus;&space;left)&space;>>&space;1&space;" title="https://latex.codecogs.com/svg.image?mid = \frac{left + right}{2}\\\\mid = left + \frac{rigjt - left}{2}\\\\mid = left + (right + left) >> 1 " />
 
 1. 在一个有序数组中,如何判断某个数是否存在
    
