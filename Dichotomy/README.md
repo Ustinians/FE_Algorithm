@@ -2,12 +2,11 @@
 
 ![](
 https://latex.codecogs.com/gif.image?\dpi{110}mid&space;=&space;\frac{left&space;&plus;&space;right}{2}\\\\mid&space;=&space;left&space;&plus;&space;\frac{rigjt&space;-&space;left}{2}\\\\mid&space;=&space;left&space;&plus;&space;(right&space;&plus;&space;left)&space;>>&space;1&space;)
+使用第一个方法的时候,容易导致溢出,因此改用第二个方法,第三个方法相当于第二个方法且比第二个方法快
 
 1. 在一个有序数组中,如何判断某个数是否存在
    
-   $$
-   时间复杂度: O(log_2N)
-   $$
+时间复杂度: ![](https://latex.codecogs.com/gif.image?\dpi{110}O(log_2N)&space;)
    
    ```js
    const findNumByDichotomy = (arr,num) => {
