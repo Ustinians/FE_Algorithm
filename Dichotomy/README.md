@@ -1,7 +1,6 @@
 # 二分法的详解与拓展
 
-
-<img src="https://latex.codecogs.com/svg.image?mid&space;=&space;\frac{left&space;&plus;&space;right}{2}\\\\mid&space;=&space;left&space;&plus;&space;\frac{rigjt&space;-&space;left}{2}容易溢出\\\\mid&space;=&space;left&space;&plus;&space;(right&space;&plus;&space;left)&space;>>&space;1&space;" title="https://latex.codecogs.com/svg.image?mid = \frac{left + right}{2}\\\\mid = left + \frac{rigjt - left}{2}\\\\mid = left + (right + left) >> 1 " />
+https://latex.codecogs.com/gif.image?\dpi{110}mid&space;=&space;\frac{left&space;&plus;&space;right}{2}\\\\mid&space;=&space;left&space;&plus;&space;\frac{rigjt&space;-&space;left}{2}\\\\mid&space;=&space;left&space;&plus;&space;(right&space;&plus;&space;left)&space;>>&space;1&space;
 
 1. 在一个有序数组中,如何判断某个数是否存在
    
