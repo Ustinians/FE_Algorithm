@@ -87,4 +87,74 @@ $$
 最差时的时间复杂度: O(n^2)
 $$
 
-# 
+## 堆排序
+
+代码:
+
+```js
+/**
+ * 堆排序
+ * 传入一个数组
+ * 将其从最下面的非叶子节点开始排序
+ * 依次向上将堆调整成最大堆
+ * 每次将最顶上最大的数取出放在新的数组ans中
+ * 然后重新调整堆为最大堆,再取出最大的放入ans中
+ * 重复以上过程知道arr为空
+ * 返回ans
+ */
+// 堆排序
+const heapSort = (arr) => {
+    if(arr.length <= 1) return arr;
+    buildHeap(arr);
+    var len = arr.length;
+    const ans = [];
+    for(let i = len-1;i > 0;i--){
+        swap(arr,0,i); // 进行递归调整,每次都将最大的数放在最后
+        ans.unshift(arr.pop());
+        heapify(arr,0); // 然后调整堆
+    }
+    ans.unshift(arr.pop());
+    return ans;
+}
+
+// 创建一个堆
+const buildHeap = (arr) => {
+    // if(arr.length <= 1) return arr;
+    var len = arr.length;
+    for(let i = Math.floor(len/2)-1;i >= 0;i--){
+        /**
+         * 从len/2开始的原因是因为len/2后面的就都是叶子节点了
+         */
+        // 调整位置使其变成最大堆
+        heapify(arr,i);
+    }
+}
+
+// 调整成最大堆
+const heapify = (arr,index) => {
+    // 调整数组使其成为最大堆
+    var left = 2 * index + 1;
+    var len = arr.length;
+    while(left < len){
+        let largest = index; // 先将最大值赋值给index
+        largest = (left+1 < len && arr[left+1] > arr[left]) ? left+1 : left; // 获取到左右节点中较大的一个
+        largest = arr[largest] > arr[index] ? largest : index;
+        if(largest == index) break; // 此时当前节点比左右节点大
+        swap(arr,largest,index); // 如果largest节点的值大于index
+        index = largest;
+        left = index * 2 + 1; // 循环调整左右子堆直到叶子节点
+    }
+}
+// 交换数组中两个节点的函数
+const swap = (arr,i,j) => {
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+var arr = [1];
+console.log(heapSort(arr));}
+
+var arr = [5,8,4,9,1,5,4];
+console.log(heapSort(arr));
+```
