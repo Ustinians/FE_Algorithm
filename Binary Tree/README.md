@@ -141,4 +141,38 @@ const isCBT = (root) => {
     return true;
 }
 ```
+## 满二叉树
+
+获取二叉树的高度
+
+```js
+// 获取二叉树的高度
+const TreeHeight = (root) => {
+    if(!root) return 0;
+    return Math.max(TreeHeight(root.left),TreeHeight(root.right)) + 1;
+}
+```
+
+获取二叉树的节点个数
+
+```js
+// 获取二叉树的节点个数
+const TreeNodeNum = (root) => {
+    if(!root) return 0;
+    return 1 + TreeNodeNum(root.left) + TreeNodeNum(root.right);
+}
+```
+
+判断一棵树是不是满二叉树
+
+```js
+// 判断一棵树是不是满二叉树
+const isFullBinaryTree = (root) => {
+    let height = TreeHeight(root);
+    let count = TreeNodeNum(root);
+    if(count === Math.pow(2,height)-1) return true;
+    return false;
+}
+```
+
 
