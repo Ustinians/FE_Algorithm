@@ -174,5 +174,213 @@ const isFullBinaryTree = (root) => {
     return false;
 }
 ```
+## 平衡二叉树
+
+1. 是二叉排序树
+2. 任何一个节点的左子树或者右子树都是平衡二叉树(左右高度差小于等于1)
+
+```js
+// 判断一棵树是不是平衡二叉树
+const isBalancedBinaryTree = (root) => {
+    // 如果节点为空或者无左右子树,返回true
+    if(!root) return true;
+    if(!root.left && !root.right) return true;
+    // 如果左右子树的高度差大于1或者当前树不是二叉搜索树,返回false
+    if(Math.abs(TreeHeight(root.left)-TreeHeight(root.right)) > 1 || !isBinarySearchTree(root)) return false;
+    // 判断左右子树是不是平衡二叉树
+    return isBalancedBinaryTree(root.left) && isBalancedBinaryTree(root.right);
+}
+```
+
+## 二叉树例题训练
+
+### 题目一: 最低公共祖先节点
+
+1. 给定一个**二叉搜索树**, 找到该树中两个指定节点的最近公共祖先
+
+   ```js
+   const lowestCommonAncestor = (root,p,q) => {
+       // 二叉搜索树,左边节点的值都小于当前节点,右边节点的值都大于当前节点
+       if(p.val < root.val && q.val < root.val){
+           // 如果两个值都小于root.val,遍历左子树寻找合适的节点
+           return lowestCommonAncestor(root.left);
+       }
+       else if(p.val > root.val && q.val > root.val){
+           // 如果两个值都大于root.val,遍历右子树寻找合适的节点
+           return lowestCommonAncestor(root.right);
+       }
+       // 如果一个大于当前节点一个小于当前节点,返回当前的节点
+       return root;
+   }
+   ```
+
+2. 给定两个二叉树的节点`node1`和`node2`,找出他们的最低公共祖先节点
+
+   方法一:
+
+   ```js
+   // 寻找两个节点的最低公共祖先
+   const lowestCommonAncestor = (root,p,q) => {
+       // 创建一个用于存储父节点的哈希表
+       const fatherMap = new Map();
+       // 根节点的父节点就是它本身
+       fatherMap.set(root,root);
+       // 遍历将每个节点及其父节点存储在fatherMap中
+       process(root,fatherMap);
+       let node = p;
+       // 创建一个用于存储p节点祖先节点的哈希表
+       const map = new Map();
+       while(node != fatherMap.get(node)){
+           // 当没有遍历到根节点
+           map.set(node);
+           // node=node的父节点
+           node = fatherMap.get(node);
+       }
+       // 将根节点也存入到map中(也是p的祖先节点)
+       map.set(root);
+       // 寻找二者共同的祖先节点
+       while(q != fatherMap.get(q)){
+           // 向上找q的祖先节点,查看其是否在p的祖先节点中
+           // 如果找到了二者的公共祖先节点,返回
+           if(map.has(q)) return q;
+           q = fatherMap.get(q);
+       }
+       // 如果上面的遍历都没有找到结果,则最低公共祖先节点为root
+       return root;
+   }
+   
+   // 遍历存储每个节点的父节点
+   const process = (root,fatherMap) => {
+       if(!root) return;
+       if(root.left){
+           fatherMap.set(root.left,root);
+           process(root.left,fatherMap);
+       }
+       if(root.right){
+           fatherMap.set(root.right,root);
+           process(root.right,fatherMap);
+       }
+   }
+   ```
+
+   方法二
+
+   ```js
+   // 方法二
+   /*
+   1. p是q的最低公共祖先,或者q是p的最低公共祖先
+   2. p,q不是对方的最低公共祖先
+   */
+   const lowestCommonAncestor = (root,p,q) => {
+       if(!root || root == p || root == q) return root;
+       const left = lowestCommonAncestor(root.left,p,q);
+       const right = lowestCommonAncestor(root.right,p,q);
+       // 如果二者都不为空(p,q一个在左子树上,一个在右子树上)
+       // 返回当前的根节点
+       if(left && right) return root;
+       // 如果有一方为空,说明p,q都在另一方上
+       return left ? left : right;
+   }
+   ```
+
+### 题目二: 寻找后继节点
+
+现在有一种新的二叉树节点类型如下:
+
+```js
+// 二叉树的结构
+function TreeNode(val, left, right, parent) {
+    this.val = (val === undefined ? 0 : val)
+    this.left = (left === undefined ? null : left)
+    this.right = (right === undefined ? null : right)
+    this.parent = (parent === undefined ? null : parent)
+}
+```
+
+该结构比普通二叉树结构多了一个指向父节点的`parent`指针
+
+假设有一棵`TreeNode`类型的节点组成的二叉树,书中的每个节点的`parent`指针都指向自己的父节点,头结点的`parent`指向`null`
+
+只给一个在二叉树中的某个节点`node`,请实现返回`node`的后继节点的函数
+
+在二叉树的中序遍历的序列中,`node`的下一个节点叫做`node`的后继节点
+
+```js
+// 获取一个节点的后继节点
+const getSuccessorNode = (root) => {
+    if(!root) return null;
+    // 如果有右子树,后继节点就是右子树
+    if(node.right){
+        return getLeftNost(node);
+    }
+    // 如果没有右子树,就遍历找当前节点是其父节点的右子树的节点
+    else{
+        let parent = node.parent;
+        while(parent && parent.right == node){
+            // 当前节点是其父节点的右孩子
+            node = parent;
+            parent = node.parent;
+        }
+        return parent;
+    }
+}
+// 获取当前子树的最左边节点
+const getLeftMost = (node) => {
+    if(!node) return node;
+    // 如果子树上还有左子树,一直向下
+    while(node.left) node = node.left;
+    return node;
+}
+```
+
+### 二叉树的序列化和反序列化
+
+在内存中的一棵树如何变成字符串形式,有如何从字符串形式变成内存里的树?
+
+```js
+// 将二叉树转化成字符串返回
+const serialByPre = (root) => {
+    if(!root) return "#_";
+    let res = root.val + '_';
+    res += serialByPre(root.left);
+    res += serialByPre(root.right);
+    return res;
+}
+
+// 通过字符串创建二叉树
+const reconPreOrder = (queue) => {
+    let value = queue.pop();
+    if(value === '#') return null;
+    let node = new TreeNode(value);
+    node.left = reconPreOrder(queue);
+    node.right = reconPreOrder(queue);
+    return node;
+}
+
+const arr = [8,5,11,2,7];
+var root = initBinaryTree(arr);
+console.log(serialByPre(root));
+var res = serialByPre(root);
+var queue = res.split('_').reverse();
+console.log(reconPreOrder(queue));
+  
+```
+
+### 纸条折痕问题
+
+给你一张纸条,每次从中间向上对折,计算对折n次后凹折痕和凸折痕的数量
+
+![image-20220416173916006](https://pic.imgdb.cn/item/625aae6f239250f7c51019d8.jpg)
+
+第一次对折后,得到一条凹折痕
+
+第二次对折后,上面为凹折痕,下面为凸折痕
+
+再对折一次,发现规律为当前折痕上面为凹折痕,下面为凸折痕
+
+设凹折痕为`true`,凸折痕为`false`
+
+
+
 
 
