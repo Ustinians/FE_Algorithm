@@ -95,8 +95,127 @@ const getNextArray = (ms) => {
     return next;
 }
 ```
+## Manacher算法解决问题
 
+字符串`str`中,最长回文子串的长度如何求解 ?
 
+如何做到时间复杂度`O(N)`完成 ?
+```js
+// 转换字符串为Manacher形式
+const manacherString = (str) => {
+    let charArr = str.split('');
+    let res = new Array(str.length * 2 + 1);
+    let index = 0;
+    for(let i = 0;i != res.length;i++){
+        res[i] = (i & 1) == 0 ? '#' : charArr[index++];
+    }
+    return res;
+}
+
+const maxLcpLength = (s) => {
+    if(!s || s.length == 0) return 0;
+    let str = manacherString(s); // 1221 -> #1#2#2#1#
+    let pArr = new Array(str.length); // 回文半径数组
+    let C = -1; // 对称中心
+    let R = -1; // 回文数的右边界再往右一个位置,最右的有效区是R-1位置
+    let max = -Number.MAX_VALUE; // 扩出来的最大值
+    for(let i = 0;i != str.length;i++){
+        // 每个位置都求回文半径
+        // i至少回文的区域,先给pArr[i]
+        /**
+         * 如果R>i说明i在R内(返回与i对称的点的pArr长度与i距离回文数边缘长度中较小的一个)
+         * 否则说明i在R外(此时回文长度最小为1)
+         */
+        pArr[i] = R > i ? Math.min(pArr[2*C-i],R-i) : 1;
+        //当回文范围还在数组中
+        while(i + pArr[i] < str.length && i - pArr[i] > -1){
+            // 当左扩和右扩的数据相等时,回文半径加1
+            if(str[i+pArr[i]] == str[i-pArr[i]]) pArr[i]++;
+            // 当左扩和右扩不相等的时候,停止循环,寻找下一个节点的回文
+            else break;
+        }
+        // R记录最大的右扩数据
+        // C记录右扩最大的对称中心
+        if(i + pArr[i] > R){
+            R = i + pArr[i];
+            C = i;
+        }
+        // 记录最大值
+        max = Math.max(max,pArr[i]);
+    }
+    return max-1;
+}
+```
+
+```js
+/**
+ * manacherString函数
+ * 将字符串转化成Manacher形式
+ * 1221 -> #1#2#2#3#
+ */
+const manacherString = (str) => {
+    let charArr = str.split(''); // 转化成数组
+    let res = new Array(str.length * 2 + 1); // 用于存储转化后的数组
+    let index = 0;
+    for(let i = 0;i < res.length;i++){
+        /**
+         * 计算,当i与1进行与运算后等于0,插入'#'(偶数位)
+         * 0 & 1 = 0 (00000000 & 00000001 = 0)
+         * 1 & 1 = 1 (00000001 & 00000001 = 1)
+         * 2 & 1 = 0 (00000010 & 00000001 = 0)
+         * 3 & 1 = 1 (00000011 & 00000001 = 1)
+         * ......
+         */
+        res[i] = [i & 1] == 0 ? '#' : charArr[index++];
+    }
+    // 返回转化后的字符数组
+    return res;
+}
+
+// 计算最长回文子串的长度
+const maxLcpLength = (s) => {
+    // 如果字符串不存在或者为空串,最长回文子串的长度为0
+    if(!s || s.length == 0) return 0;
+    // 1221 -> ['#','1','#','2','#','2','#','1','#']
+    let str = manacherString(s); // 将字符串s转化成字符数组str
+    let pArr = new Array(str.length); // 记录每个节点处的回文半径的数组
+    let C = -1; // 记录对称中心
+    let R = -1; // 记录回文半径
+    let max = -Number.MAX_VALUE; // 记录扩出来的最大值'
+    for(let i = 0;i < str.length;i++){
+        // 求每个位置的回文半径
+        // 先计算出i最少回文的半径,赋值给pArr[i]
+        if(R > i){
+            // 如果i在R范围内(最右回文长度)
+            /**
+             * 在回文半径内时
+             * 比较与i对称的i'的pArr长度和R-i长度
+             * 1. 如果i'的pArr长度在R内,pArr[i] = pArr[i']
+             * 2. 如果i'的pArr长度已经超过i'到R边的距离,先将pArr[i]赋值为R-i,在这段距离内,i两边是回文的,超出R后的数据需要另行判断
+             * 3. 如果二者相等,赋值给pArr[i],再比较外面是否也符合回文条件
+             */
+            pArr[i] = Math.min(pArr[2*C-i],R-i);
+        }
+        else pArr[i] = 1; // 自己回文对称(前后再进行判断,先将回文长度赋值最小值1)
+        while(i+pArr[i] < str.length && i-pArr[i] > -1){
+            // 当还在数组内部的时候
+            // 当左扩和右扩一位的值相同的时候,回文数半径+1
+            if(str[i+pArr[i]] === str[i-pArr[i]]) pArr[i]++;
+            else break; // 左扩右扩 不相等,停止循环,寻找下一个节点的回文半径
+        }
+        // R记录最大的右扩长度
+        // C记录右扩最大的对称中心
+        if(i + pArr[i] > R) {
+            R = i + pArr[i];
+            C = i;
+        }
+        // 记录最长的回文数长度
+        max = Math.max(max,pArr[i]);
+    }
+    // 半径-1就是原串最大的回文长度
+    return max-1;
+}
+```
 
 
 
