@@ -380,7 +380,126 @@ console.log(reconPreOrder(queue));
 
 设凹折痕为`true`,凸折痕为`false`
 
+## 树形DP套路
 
+树形DP套路使用前提
 
+如果题目求解目标是S规则,则求解流程可以定成以每一个结点为头结点的子树在S规则下的每一个答案,并且最终答案一定在其中
 
+* 树形`dp`套路第一步：
+
+  以某个节点X为头节点的子树中，分析答案有哪些可能性，并且这种分析是以X的左子树、X的右子树和X整棵树的角度来考虑可能性的
+
+* 树形`dp`套路第二步：
+
+  根据第一步的可能性分析，列出所有需要的信息
+
+* 树形`dp`套路第三步：
+
+  合并第二步的信息，对左树和右树提出同样的要求，并写出信息结构
+
+* 树形`dp`套路第四步：
+
+  设计递归函数，递归函数是处理以X为头节点的情况下的答案。
+
+  包括设计递归的`basecase`，默认直接得到左树和右树的所有信息，以及把可能性做整合，并且要返回第三步的信息结构这四个小步骤
+  
+### 二叉树节点间的最大距离问题
+
+从二叉树的节点`a`出发，可以向上或者向下走，但沿途的节点只能经过一次，到达节点`b`时路径上的节点个数叫作`a`到`b`的距离，那么二叉树任何两个节点之间都有距离，求整棵树上的最大距离。
+
+例如,下面图片的最大距离是7(8->4->2->1->3->6->9)
+![test1](https://pic.imgdb.cn/item/627906810947543129972439.jpg)
+
+```js
+// 二叉树的结构
+function TreeNode(val, left, right) {
+    this.val = (val === undefined ? 0 : val)
+    this.left = (left === undefined ? null : left)
+    this.right = (right === undefined ? null : right)
+}
+
+// 初始化一个二叉树
+const initBinaryTree = (arr) => {
+    let len = arr.length;
+    let tree = initTreeNode(arr,0,len);
+    return tree;
+}
+
+const initTreeNode = (arr,i,len) => {
+    if(i >= len) return null;
+    if(arr[i] === null) return null;
+    let node = new TreeNode(arr[i]);
+    node.left = initTreeNode(arr,2*i+1,len);
+    node.right = initTreeNode(arr,2*i+2,len);
+    return node;
+}
+
+// 创建信息结构
+function Info(maxDistance,height){
+    this.maxDistance = (maxDistance === undefined ? 0 : maxDistance); // 当前树的最大距离
+    this.height = (height === undefined ? 0 : height); // 当前树的高度
+}
+
+// 返回以x为头的整棵树的两个信息(树的高度和最大距离)
+const process = (x) => {
+    if(!x) return new Info(0,0); // 当当前树为空的时候,最大距离和高度都为0的
+    let leftInfo = process(x.left);
+    let rightInfo = process(x.right);
+    // 计算左树和右树的Info(maxDistance,height)
+    /*
+    	如果遍历最大距离事经过当前节点,则当前树的最大距离就是左右子树的高度之和+1
+    	如果不经过当前结点,则当前树的最大距离就是左树右树中较大的最大距离
+     */
+    let p1 = leftInfo.maxDistance; // 令p1等于左树的最大距离
+    let p2 = rightInfo.maxDistance; // 令p2等于右树的最大距离
+    let p3 = leftInfo.height + rightInfo.height + 1; // 令p3等于左右树的高度之和加一(如果经过当前节点)
+    // 当经过当前节点的时候,当前节点的最大距离等于左右子树高度之和,否则为左树最大距离或者右树最大距离
+    let maxDistance = Math.max(p3,Math.max(p1,p2)); // 当前树的最大距离等于左右子树高度之和与左右子树的最大距离比较得出的最大的值
+    let height = Math.max(leftInfo.height,rightInfo.height) + 1; // 当前树节点的高度等于左右子树中较高的一棵树的高度+1
+    return new Info(maxDistance,height); // 返回根据当前树构建的Info
+}
+
+// 返回最大距离
+const maxDistance = (head) => {
+    return process(head).maxDistance;
+}
+```
+
+### 派对的最大快乐值
+
+员工信息的定义如下:
+```js
+function Employee(happy,subordinates){
+	this.happy = (happy === undefined ? 0 : happy) // 这名员工可以带来的快乐值
+    this.subordinates = (subordinates === undefined ? null : subordinates) // 这名员工有哪些直接下级
+}
+```
+or
+```java
+class Employee {
+    public int happy; // 这名员工可以带来的快乐值
+    List<Emplotee> subordinates; // 这名员工有哪些直接下级
+}
+```
+
+公司的每个员工都符合`Employee`类的描述。整个公司的人员结构可以看作是一棵标准的、没有环的多叉树。树的头节点是公司唯一的老板。除老板之外的每个员工都有唯一的直接上级。叶节点是没有任何下属的基层员工（`subordinates`列表为空），除基层员工外，每个员工都有一个或多个直接下级。
+
+这个公司现在要办`party`，你可以决定哪些员工来，哪些员工不来。但是要遵循如下规则。
+
+1．如果某个员工来了，那么这个员工的所有直接下级都不能来
+
+2．派对的整体快乐值是所有到场员工快乐值的累加
+
+3．你的目标是让派对的整体快乐值尽量大
+
+给定一棵多叉树的头节点`boss`，请返回派对的最大快乐值。
+
+例如,在下列结构中
+![test2](https://pic.imgdb.cn/item/62790eab0947543129aca09a.jpg)
+
+x树的快乐值分为两种情况
+
+1. `x`来的时候,总快乐值等于`x`的快乐值 + `a`不来时`a`子树的快乐值总值 + `b`不来时`b`子树的快乐值总值 + `c`不来时`c`子树的快乐值总值
+2. `x`不来的时候,总快乐值等于`a`树的最大快乐之 + `b`树的最大快乐值 + `c`树的最大快乐值
 
