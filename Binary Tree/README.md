@@ -370,7 +370,7 @@ console.log(reconPreOrder(queue));
 
 给你一张纸条,每次从中间向上对折,计算对折n次后凹折痕和凸折痕的数量
 
-![image-20220416173916006](https://pic.imgdb.cn/item/625aae6f239250f7c51019d8.jpg)
+![image-20220416173916006](https://github.com/Ustinians/FE_Algorithm/blob/main/images/test3.jpg)
 
 第一次对折后,得到一条凹折痕
 
@@ -409,7 +409,7 @@ console.log(reconPreOrder(queue));
 从二叉树的节点`a`出发，可以向上或者向下走，但沿途的节点只能经过一次，到达节点`b`时路径上的节点个数叫作`a`到`b`的距离，那么二叉树任何两个节点之间都有距离，求整棵树上的最大距离。
 
 例如,下面图片的最大距离是7(8->4->2->1->3->6->9)
-![test1](https://pic.imgdb.cn/item/627906810947543129972439.jpg)
+![test1](https://github.com/Ustinians/FE_Algorithm/blob/main/images/test1.jpg)
 
 ```js
 // 二叉树的结构
@@ -496,7 +496,7 @@ class Employee {
 给定一棵多叉树的头节点`boss`，请返回派对的最大快乐值。
 
 例如,在下列结构中
-![test2](https://pic.imgdb.cn/item/62790eab0947543129aca09a.jpg)
+![test2](https://github.com/Ustinians/FE_Algorithm/blob/main/images/test2.jpg)
 
 x树的快乐值分为两种情况
 
