@@ -503,3 +503,82 @@ x树的快乐值分为两种情况
 1. `x`来的时候,总快乐值等于`x`的快乐值 + `a`不来时`a`子树的快乐值总值 + `b`不来时`b`子树的快乐值总值 + `c`不来时`c`子树的快乐值总值
 2. `x`不来的时候,总快乐值等于`a`树的最大快乐之 + `b`树的最大快乐值 + `c`树的最大快乐值
 
+```js
+// 公司员工结构
+function Employee (happy,nexts){
+    this.happy = (happy === undefined ? 0 : happy) // 这名员工可以带来的快乐值
+    this.nexts = (nexts === undefined ? null : nexts) // 这名员工有哪些直接下属
+}
+
+// Info结构
+function Info(laiMaxHappy,buMaxHappy){
+    this.laiMaxHappy = (laiMaxHappy === undefined ? 0 : laiMaxHappy) // 该员工来的时候的快乐值
+    this.buMaxHappy = (buMaxHappy === undefined ? 0 : buMaxHappy) // 该员工不来的时候的快乐值
+}
+
+// 计算最大快乐值的函数
+const maxHappy = (boss) => {
+    let headInfo = process(boss); 
+    return Math(headInfo.laiMaxHappy, headInfo.buMaxHappy); // 返回该员工来和不来情况下的最大快乐值的比较
+}
+
+const process = (boss) => {
+    if(!boss.nexts) return new Info(x.happy,0); // 当boss是基层员工的时候
+    let lai = x.happy; // x来的时候,整棵树的最大快乐值
+    let bu = 0; // x不来的时候,整棵树的最大快乐值
+    for(let next of x.nexts){
+        let nextInfo = process(next);
+        lai += nextInfo.buMaxHappy; // 如果当前结点员工参加,那么他的直接下级就不能参加
+        // 如果当前节点员工不参加,那么他的直接下级就可以参加
+        // 此时应当判断next员工来和不来时的快乐值大小决定该员工来不来
+        bu += Math.max(nextInfo.laiMaxHappy,nextInfo.buMaxHappy); 
+    }
+    return new Info(lai,bu);
+}
+```
+
+## Morris遍历
+一种遍历二叉树的方式,并且<u>**时间复杂度为`O(N)`,额外空间复杂度为`O(1)**`,</u>通过利用原树种大量空闲指针的方式,达到节省空间的目的
+
+`Morris`遍历细节
+
+假设来到当前节点`cur`，开始时`cur`来到头节点位置
+
+1. 如果`cur`没有左孩子，`cur`向右移动（`cur＝cur.right`）
+
+2. 如果`cur`有左孩子，找到左子树上最右的节点`mostRight`：
+   * 如果`mostRight`的右指针指向空，让其指向cur，然后cur向左移动（`cur＝cur.left`）
+   * 如果`mostRight`的右指针指向`cur`，让其指向`null`， 然后cur向右移动（`cur＝cur.right`）
+3. `cur`为空时遍历停止
+```js
+const morris = (head) => {
+    // 如果一开始就是空,直接返回
+    if(!head) return;
+    let cur = head;
+    let mostRight = null;
+    while(cur !== null){ // 过流程
+        mostRight = cur.left; // mostRight是cur的左孩子
+        // 如果cur.left为空时,直接令cur=cur.right
+        if(mostRight !== null){
+            // 当有左子树
+            while(mostRight.right !== null && mostRight.right !== cur){
+                mostRight = mostRight.right; // 找到最右结点
+            }
+            // mostRight变成cur左子树上最右的结点
+            if(mostRight.right === null){
+                // 第一次来到cur
+                mostRight.right = cur;
+                cur = cur.left;
+                continue;
+            }
+            else{
+                // 此时mostRight.right = cur
+                mostRight.right = null;
+            }
+        }
+        cur = cur.right;
+    }
+}
+```
+
+
