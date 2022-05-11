@@ -581,4 +581,192 @@ const morris = (head) => {
 }
 ```
 
+### 实现先序遍历
 
+每个结点出现的第一次进行打印
+
+```js
+// @先序遍历
+const morris = (head) => {
+    // 如果一开始就是空,直接返回
+    if(!head) return;
+    let cur = head;
+    let mostRight = null;
+    while(cur !== null){ // 过流程
+        mostRight = cur.left; // mostRight是cur的左孩子
+        // 如果cur.left为空时,直接令cur=cur.right
+        if(mostRight !== null){
+            // 当有左子树
+            while(mostRight.right !== null && mostRight.right !== cur){
+                mostRight = mostRight.right; // 找到最右结点
+            }
+            // mostRight变成cur左子树上最右的结点
+            if(mostRight.right === null){
+                // 第一次来到cur
+                console.log(cur.value);
+                mostRight.right = cur;
+                cur = cur.left;
+                continue;
+            }
+            else{
+                // 此时mostRight.right = cur
+                mostRight.right = null;
+            }
+        }
+        else{
+            // 没有左子树的情况
+            // 先序遍历
+            console.log(cur.value);
+        }
+        cur = cur.right;
+    }
+}
+```
+
+### 实现中序遍历
+
+只被遍历一次的结点,直接打印出来,被遍历两次的结点,第二次再打印
+
+```js
+// @中序遍历
+const morris = (head) => {
+    // 如果一开始就是空,直接返回
+    if(!head) return;
+    let cur = head;
+    let mostRight = null;
+    while(cur !== null){ // 过流程
+        mostRight = cur.left; // mostRight是cur的左孩子
+        // 如果cur.left为空时,直接令cur=cur.right
+        if(mostRight !== null){
+            // 当有左子树
+            while(mostRight.right !== null && mostRight.right !== cur){
+                mostRight = mostRight.right; // 找到最右结点
+            }
+            // mostRight变成cur左子树上最右的结点
+            if(mostRight.right === null){
+                // 第一次来到cur
+                // 在里面循环的时候,触发不了打印行为,当第二次遍历,会触发下面的打印行为
+                mostRight.right = cur;
+                cur = cur.left;
+                continue;
+            }
+            else{
+                // 此时mostRight.right = cur
+                mostRight.right = null;
+            }
+        }
+        // 如果没有左树则直接跳过上面操作,直接打印(只打印一次)
+        console.log(cur.value);
+        cur = cur.right;
+    }
+}
+```
+
+### 实现后序遍历
+
+1. 逆序打印左树的右边界
+
+2. 单独打印整棵树的右边界
+
+当一个结点被遍历第二次的时候,逆序打印其左树的右边界,最后遍历完将其右边界单独打印出来
+
+```js
+// @后序遍历
+const morris = (head) => {
+    if(head === null) return;
+    let cur = head;
+    let mostRight = null; // 右边界
+    while(cur !== null){
+        mostRight = cur.left;
+        if(mostRight !== null){
+            while(mostRight.right !== null && mostRight.right !== cur){
+                mostRight = mostRight.right; // 寻找左子树的最右边界
+            }
+            if(!mostRight.right){
+                // 当右边界为空的时候
+                mostRight.right = cur;
+                cur = cur.left;
+                continue;
+            }
+            else{
+                mostRight.right = null;
+                printEdge(cur.left);
+            }            
+        }
+        cur = cur.right;
+    }
+    printEdge(head);
+}
+
+// 以X为头的树,逆序打印这棵树的右边界
+const printEdge = (X) => {
+    // 将这棵树的右边界逆序并依次输出
+    let tail = reverseEdge(X);
+    let cur = tail;
+    while(cur !== null){
+        console.log(cur.value);
+        cur = cur.right;
+    }
+    // 打印完毕后将右边界恢复原样
+    reverseEdge(tail);
+}
+
+const reverseEdge = (from) => {
+    let pre = null;
+    let next = null;
+    while(from !== null){
+        next = from.right;
+        from.right = pre;
+        pre = from;
+        from = next;
+    }
+    return pre;
+}
+```
+
+### 根据中序遍历判断当前二叉树是不是搜索二叉树
+
+搜索二叉树中每个节点左树上的结点的值都小于当前节点,右树上的结点的值都大于当前节点
+
+即该二叉树的中序遍历中右边结点的值一定大于左边结点的值
+
+```js
+// @判断是不是搜索二叉树
+const morris = (head) => {
+    // 如果是空树,返回true
+    if(!head) return true;
+    let cur = head;
+    let mostRight = null;
+    let preVaule = -Number.MAX_VALUE; // 令preVaule为最小数
+    while(cur !== null){ // 过流程
+        mostRight = cur.left; // mostRight是cur的左孩子
+        // 如果cur.left为空时,直接令cur=cur.right
+        if(mostRight !== null){
+            // 当有左子树
+            while(mostRight.right !== null && mostRight.right !== cur){
+                mostRight = mostRight.right; // 找到最右结点
+            }
+            // mostRight变成cur左子树上最右的结点
+            if(mostRight.right === null){
+                // 第一次来到cur
+                mostRight.right = cur;
+                cur = cur.left;
+                continue;
+            }
+            else{
+                // 此时mostRight.right = cur
+                mostRight.right = null;
+            }
+        }
+        /**
+         * 判断是不是搜索二叉树
+         * 每棵树左边节点的值都小于当前节点,右边结点的值都大于当前节点
+         * 即中序遍历种每一个元素都大于前一个元素
+         */
+        if(cur.value <= preVaule) return false;
+        preVaule = cur.value;
+        cur = cur.right;
+    }
+    return true;
+}
+```
