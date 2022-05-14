@@ -106,7 +106,7 @@ const is4Power = (n) => {
 
 直到与运算的结果为0(没有进位了)
 
-![image-20220513203808367](D:\!笔记\!算法\images\image-20220513203808367.png)
+![image-20220513203808367](https://github.com/Ustinians/FE_Algorithm/blob/main/images/bit1.jpg)
 
 ```js
 //@ 加法
@@ -143,7 +143,7 @@ const minus = (a,b) => {
 
 两个二进制相乘的时候,直接使用二进制的每一位互相乘(和十进制乘法相同),最后将结果相加即可
 
-![1652450313(1)](D:\!笔记\!算法\images\1652450313(1).jpg)
+![1652450313(1)](https://github.com/Ustinians/FE_Algorithm/blob/main/images/bit2.jpg)
 
 ```js
 //@ 二进制计算两个数相乘
