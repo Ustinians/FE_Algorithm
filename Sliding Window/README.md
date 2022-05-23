@@ -417,6 +417,341 @@ const randEqual = () => {
     return res1 === 0 && res2 === 1 ? 0 : 1;
 }
 ```
+## 计算二叉树解构
+
+给定一个非负整数`n`,代表二叉树的节点个数,返回能形成多少种不同的二叉树结构
+
+**思路:**
+
+当只有一个结点的时候,只能组成一种结构
+
+当有两个节点的时候,能组成两种结构
+
+递归:
+
+```js
+/**
+ * 
+ * @param {number} n 节点数量
+ * @returns {number} 返回能组成的二叉树结构的个数
+ */
+const process = (n) => {
+    if(n < 0) return 0;
+    if(n === 0) return 1;
+    if(n === 1) return 1;
+    if(n === 2) return 2;
+    let res = 0;
+    for(let leftNum = 0;leftNum <= n-1;leftNum++){
+        let leftWays = process(leftNum);
+        // 当左边节点数量为leftNum的时候,右边为n-1-leftNum(有一个作为根节点)
+        let rightWays = process(n - 1 - leftNum);
+        res += leftWays + rightWays;
+    }
+    return res;
+}
+```
+
+动态规划
+
+```js
+/**
+ * @动态规划解决问题
+ * @param {number} n 节点个数 
+ * @returns {number} 返回能组成的二叉树的数量
+ */
+const numTrees = (n) => {
+    if(n < 2) return 1;
+    let dp = new Array(n+1);
+    dp[0] = 1;
+    for(let i = 1;i < n+1;i++){ // 节点个数为i的时候
+        for(let j = 0;j < i;j++){ // 左侧节点为j,右侧节点为i-j-1个
+            dp[i] += dp[j] * dp[i-j-1];
+        }
+    }
+    return dp[n];
+}
+```
+
+## 完整括号字符串
+
+一个完整的括号字符串定义规则如下:
+
+1. 空字符串是完整的
+2. 如果s是完整的字符串,那么(s)也是完整的
+3. 如果s和t是完整的字符串,将它们连接起来的st也是完整的
+
+例如,`"(()())"`,`""`和`"(())()"`是完整的括号字符串,`())(`,`"()("`和`")"`是不完整的括号字符串
+
+牛牛有一个括号字符串s,现在需要在其中任意位置尽量少的添加括号,将其转化成一个完整的括号字符串,请问牛牛至少需要添加多少个括号?
+
+**思路:**
+
+定义一个变量count,从左往右遍历,遇到左括号count++,遇到右括号count--
+
+1. 当遍历完之后count等于0,刚好是完整的括号字符串
+2. 当遍历完之后count>0,缺少右边括号,直接补上即可
+3. 在遍历的过程中,只要发现count小于0,就把ans+1(添加左括号)
+
+```js
+/**
+ * 括号匹配问题
+ * @param {string} str 括号字符串
+ * @returns {number} 最少需要添加的括号 
+ */
+const needParentheses = (str) => {
+    let count = 0;
+    let ans = 0;
+    for(let i = 0;i < str.length;i++){
+        if(str[i] === '(') count++; // 如果是左括号,count++
+        else{ // 遇到的是右括号
+            if(count === 0){
+                ans++; // 此时右括号多出来,添加左括号,ans++
+            }
+            else{
+                count--; // 如果此时的左括号比较多,count--
+            }
+        }
+    }
+    // 最后的count值一定>=0
+    /**
+     * 当count>0,ans=0的时候,左括号多出来,需要补右括号
+     * 当count>0,ans>0的时候,前面部分的右括号比较多,需要补左括号
+     * 当count=0,ans=0的时候,刚好匹配上
+     * 当count=0,ans=0的时候,右括号多出来,需要补左括号
+     */
+    return count + ans;
+}
+```
+
+## 去重数字对
+
+给定一个数组`arr`,求差值为`k`的去重数字对
+
+将数组中所有的数据存储到哈希表中,然后每遍历到一个数,都查看有没有比它大k的数
+
+### map
+
+```js
+/**
+ * @param {number[]} arr 要进行去重获取数字对的数组
+ * @param {number} k 差值
+ * @returns {number[][]} 去重后得到的数字对 
+ * 例: arr=[1,4,5,8,7],k=4
+ * 返回: [[1,5],[4,8]]
+ */
+const findNumberPair = (arr,k) => {
+    let map = new Map(); // 创建一个哈希表
+    for(let i = 0;i < arr.length;i++){
+        if(!map.has(arr[i])) map.set(arr[i]);
+    }
+    let res = [];
+    for(num of map){
+        if(map.has(num[0]+k)){
+            res.push([num[0],num[0]+k]);
+        }
+    }
+    return res;
+}
+```
+
+### set
+
+```js
+const findNumberPair = (arr,k) => {
+    let set = new Set(arr); // 根据arr创建一个哈希表(set会自动去重)
+    let res = [];
+    for(s of set){
+        if(set.has(s+k)){
+            res.push([s,s+k]);
+        }
+    }
+    return res;
+}
+```
+
+## 移动数组元素
+
+给一个包含n个整数元素的**集合**(保证没有重复值)a，一个包含m个整数元素的集合b。
+
+定义magic操作为，从一个集合中取出一个元素，放到另一个集合里，且操作过后**每个集合的平均值都大于于操作前**。
+
+注意以下两点：
+
+* 不可以把一个集合的元素取空，这样就没有平均值了
+
+* 值为x的元素从集合b取出放入集合a，但集合a中已经有值为x的元素，则a的平均值不变（因为集合元素不会重复），b的平均值可能会改变（因为x被取出了）
+
+问最多可以进行多少次magic操作？
+
+**思路:**
+
+如果两个集合的平均值相同,不管从哪个集合拿元素到另一个集合,必然导致一个集合的平均数下降或者不变.因此此时不能进行magic操作
+
+如果a集合的平均值小于b集合的平均值,如果拿出一个小于a集合平均值的数,b集合的平均值就会减小,如果拿出一个大于a集合平均值但是小于b集合平均值的数,两个集合的平均值都会减小,当拿出一个大于b平均值的数,a集合的平均数会减小,因此得出结论: **只能从平均值较大的集合往平均值较小的集合拿元素(拿介于两个平均数之间的数字)**
+
+应该选择一个另一个集合不存在,且大于该集合平均数的最小的数字,这样a集合平均数上升幅度最小,b集合平均数上升幅度最大,就能尽可能多的进行magic操作
+
+```js
+/**
+ * @需要保证arr1和arr2中都没有重复值,并且arr1和arr2必须有数字
+ * @param {number[]} arr1 数字集合1
+ * @param {number[]} arr2 数字集合2
+ * @returns {number} 能进行的最多的操作数
+ */
+const maxOps = (arr1,arr2) => {
+    let sum1 = 0; // arr1集合的和
+    for(let i = 0;i < arr1.length;i++){
+        sum1 += arr1[i];
+    }
+    let sum2 = 0;
+    for(let i = 0;i < arr2.length;i++){
+        sum2 += arr2[i];
+    }
+    // 如果两个数字集合的平均数相同,无法进行magic操作
+    if(average(sum1,arr1.length) === average(sum2,arr2.length)) return 0;
+    // 如果平均数不相同
+    let arrMore = [];
+    let arrLess = [];
+    let sumMore = 0;
+    let sumLess = 0;
+    // 判断平均数较大的集合
+    if(average(sum1,arr1.length) > average(sum2,arr2.length)){
+        arrMore = arr1;
+        sumMore = sum1;
+        arrLess = arr2;
+        sumLess = sum2;
+    }
+    else{
+        arrMore = arr2;
+        sumMore = sum2;
+        arrLess = arr1;
+        sumLess = sum1;
+    }
+    // 将平均数较大的集合排序(便于寻找符合条件的最小的数往另一个集合插入)
+    arrMore.sort((a,b) => a-b);
+    let setLess = new Set(arrLess); // 根据数字较小的集合创建哈希表
+    let moreSize = arrMore.length;
+    let lessSize = arrLess.length;
+
+    let ops = 0; // 记录操作次数
+    for(let i = 0;i < arrMore.length;i++){ // 从小到大
+        let cur = arrMore[i];
+        // 当该元素位于两个集合平均值之间并且要magic到的集合中没有该元素
+        // 将该元素插入到arrLess中,更新平均数
+        if(cur < average(sumMore,moreSize) && cur > average(sumLess,lessSize) && !setLess.has(arrMore[i])){
+            sumMore -= cur;
+            moreSize--;
+            sumLess += cur;
+            lessSize++;
+            setLess.add(arrMore[i]);
+            ops++;
+        }
+    }
+    return ops;
+}
+
+/**
+ * @计算平均数
+ * @param {number[]} arr 数字数组
+ * @returns {number} 返回arr中所有数字的平均数 
+ */
+const average = (sum,len) => {
+    return sum/len;
+}
+```
+
+## 计算括号深度
+
+一个完整的括号字符串定义规则如下:
+
+1. 空字符串是完整的
+2. 如果s是完整的字符串,那么(s)也是完整的
+3. 如果s和t是完整的字符串,将它们连接起来的st也是完整的
+
+例如,`"(()())"`,`""`和`"(())()"`是完整的括号字符串,`())(`,`"()("`和`")"`是不完整的括号字符串
+
+对于一个合法的括号序列,我们又有一下定义它的深度:
+
+1. 空串`""`的深度为0
+2. 如果字符串`X`的深度是`x`,字符串`Y`的深度是`y`,那么字符串`XY`的深度为`max(x,y)`
+3. 如果`X`的深度是`x`,那么字符串`(X)`的深度是`x+1`
+
+例如,`()()()`的深度是1,`((()))`的深度是3,牛牛现在给你一个合法的括号字符串序列,需要你计算出其深度
+
+**思路:**
+
+创建一个变量count,初始化为0,遍历整个括号字符串,如果碰到左括号,count++,如果碰到右括号,count--
+
+count能达到的最大值就是括号的深度
+
+每个左括号如果碰到与之配对的右括号,count--,因此count的值就是遍历到当前,还没有被匹配的左括号的数量,也就是括号的深度
+
+```js
+/**
+ * @计算括号的深度
+ * @param {string} str 括号字符串
+ * @returns {number} 返回括号的最大深度
+ */
+const backetDepth = (str) => {
+    /**
+     * 从第一个开始遍历,当遇到'(',count++, 当遇到')',count--
+     * count能达到的最大值就是括号的深度(没有被匹配的左括号的数量)
+     * 每出现一个左括号,count++,如果遍历中途遇到了能与之匹配的右括号,count就会-1
+     * 因此count就是前面还未匹配右括号的左括号的数量[也就是括号的深度]
+     */
+    let count = 0;
+    let maxCount = 0;
+    for(let i = 0;i < str.length;i++){
+        if(str[i] === '(') count++; // 如果是左括号,count++
+        else count--;
+        if(count > maxCount) maxCount = count;
+    }
+    return maxCount;
+}
+```
+
+## 有效括号字符串
+
+给你一个括号字符串,请找出其中最长的有效括号字符串(左右括号刚好匹配),返回它的长度
+
+**思路:**
+
+创建`dp`数组,用于存储每个节点往前计算出的括号最大有效长度,当遇到左括号的时候,一定不是有效字符串,直接跳过,`dp[i]=0`,当遇到右括号的时候,查看前一项`dp[i-1]`的值,并向前找到与之匹配的`pre`,判断`pre`是不是右括号(能否与之匹配),如果可以的话,`dp[i]`的值至少再加2,再看`pre`前面一项的`dp[pre-1]`的值,看有没有有效字符串,如果有的话将其长度也添加上去
+
+```js
+/**
+ * @计算有效括号字符串的长度
+ * @param {string} s 要被匹配的括号字符串
+ * @returns {number} 最长的有效括号字符串的长度 
+ */
+const maxLength = (s) => {
+    // 如果字符串不存在或者长度为0,直接返回0
+    if(!s || s.length === 0) return 0;
+    let dp = new Array(s.length).fill(0);
+    let ans = s.split(''); // 将括号字符串分割成数组
+    let pre = 0, res = 0;
+    // dp[0]肯定为0(第一个括号不论是左括号还是右括号都无法匹配成)
+    for(let i = 1;i < ans.length;i++){
+        // 如果ans[i]为左括号,一定无法匹配成有效字符串,直接跳过
+        // 如果是右括号
+        if(ans[i] === ')'){
+            // dp[i-1]为dp[i-1]往前恰好匹配的有效括号长度
+            pre = i - dp[i-1] - 1; // 寻找与ans[i]配对的左括号的位置pre
+            if(pre >= 0 && ans[pre] === '('){
+                // 如果pre>=0并且前面是左括号可以匹配
+                // dp[i]的有效长度就是dp[i-1]+2再加上前面括号的有效长度
+                dp[i] = dp[i-1] + 2 + (pre > 0 ? dp[pre-1] : 0);
+            }
+        }
+        // 判断当前dp[i]和res那个有效长度更长
+        res = Math.max(res,dp[i]);
+    }
+    return res;
+}
+```
+
+
+
 
 
 
