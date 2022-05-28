@@ -400,3 +400,38 @@ const swap = (arr,i,j) => {
 var arr = [1,3,6,4,5,2];
 console.log(heapSort(arr));
 ```
+## 排序相关问题
+### 栈内排序
+请编写一个程序,对一个栈里面的整形数据,按照升序进行排序(即排序前,栈里的数据是无序的,排序后最大元素位于栈顶),要求最多只能使用一个额外的栈存放临时数据,但是不得将元素赋值到其他的数据结构中
+```js
+/**
+ * @栈内元素排序
+ * @param {number[]} stack 存储无序数据的栈 
+ * @returns {numbers[]} 返回排序之后的栈
+ */
+const stackSort = (stack) => {
+    // 如果栈内的元素小于等于1个,直接返回,无需排序
+    if(stack.length <= 1) return stack; 
+    // 创建一个新的栈,用于进行栈内元素的转移
+    let newStack = []; // newStack中的元素必须从大到小排序(栈顶元素是最小的)
+    while(stack.length){
+        let num = stack.pop(); // 栈顶元素出栈
+        if(num <= newStack[newStack.length-1]){
+            // 如果num小于newStack的栈顶元素,直接入栈
+            newStack.push(num);
+        }
+        else{
+            // 否则,将元素依次从newStack中拿出来放入stack中,直到num小于栈顶元素
+            while(num > newStack[newStack.length-1]){
+                stack.push(newStack.pop());
+            }
+            newStack.push(num);
+        }
+    }
+    // 将newStack中的元素依次放置到stack中
+    while(newStack.length){
+        stack.push(newStack.pop());
+    }
+    return stack;
+}
+```
